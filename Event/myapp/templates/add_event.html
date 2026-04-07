@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Event — Eventia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --ink:        #0d0d0d;
+            --ink-soft:   #1e1b17;
+            --paper:      #f7f4ef;
+            --ivory:      #fffdf8;
+            --gold:       #c9a84c;
+            --gold-light: #e8d49a;
+            --muted:      #7a7068;
+            --border:     #e2ddd5;
+            --card:       #ffffff;
+            --error:      #c0392b;
+            --success:    #2e7d5e;
+        }
+
+        html, body { height: 100%; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: var(--ink);
+            height: 68px;
+            padding: 0 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: #8c8480;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: var(--gold); }
+
+        .back-link svg { transition: transform 0.2s; }
+        .back-link:hover svg { transform: translateX(-3px); }
+
+        /* ── HERO BAR ── */
+        .page-hero {
+            background: var(--ink-soft);
+            padding: 52px 48px 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 80% at 5% 50%, rgba(201,168,76,0.13) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .page-hero-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            position: relative;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 300;
+            color: #fff;
+            line-height: 1.1;
+        }
+
+        .hero-title em { font-style: italic; color: var(--gold-light); }
+
+        .hero-step {
+            font-size: 0.78rem;
+            color: #4a4540;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── MAIN CONTENT ── */
+        main {
+            flex: 1;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 56px 40px 80px;
+        }
+
+        /* ── FORM LAYOUT ── */
+        .form-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 4px 28px rgba(0,0,0,0.06);
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .card:nth-child(2) { animation-delay: 0.12s; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 6px;
+        }
+
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* ── FIELD ── */
+        .field { margin-bottom: 24px; }
+        .field:last-of-type { margin-bottom: 0; }
+
+        .field label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.74rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 9px;
+        }
+
+        .field label svg { color: #c2bdb5; }
+
+        .required-dot {
+            display: inline-block;
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--gold);
+            margin-left: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Base input styles */
+        .field input[type="text"],
+        .field input[type="date"],
+        .field textarea {
+            width: 100%;
+            padding: 13px 16px;
+            background: var(--ivory);
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            appearance: none;
+        }
+
+        .field input[type="text"]::placeholder,
+        .field textarea::placeholder { color: #c5c0b8; }
+
+        .field input[type="text"]:focus,
+        .field input[type="date"]:focus,
+        .field textarea:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+            background: #fff;
+        }
+
+        .field textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.65;
+        }
+
+        /* Date input fix */
+        .field input[type="date"] {
+            width: 100%;
+            color-scheme: light;
+        }
+
+        /* Two-col row */
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* ── FILE UPLOAD ── */
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            background: var(--ivory);
+            padding: 36px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            position: relative;
+        }
+
+        .file-upload-area:hover,
+        .file-upload-area.drag-over {
+            border-color: var(--gold);
+            background: #fffbf0;
+        }
+
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-icon {
+            width: 44px; height: 44px;
+            background: var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            color: var(--muted);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .file-upload-area:hover .upload-icon {
+            background: var(--gold-light);
+            color: var(--ink);
+        }
+
+        .upload-title {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .upload-hint {
+            font-size: 0.76rem;
+            color: var(--muted);
+        }
+
+        .upload-hint span {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.7rem;
+            color: #b5b0a8;
+        }
+
+        #file-name-display {
+            margin-top: 10px;
+            font-size: 0.78rem;
+            color: var(--success);
+            font-weight: 500;
+            min-height: 18px;
+        }
+
+        /* Image preview */
+        #img-preview-wrap {
+            display: none;
+            margin-top: 14px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1.5px solid var(--border);
+        }
+
+        #img-preview-wrap img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ── SUBMIT BUTTON ── */
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: var(--ink);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.83rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            transition: background 0.25s, transform 0.15s;
+            margin-top: 28px;
+        }
+
+        .btn-submit:hover { background: var(--gold); color: var(--ink); }
+        .btn-submit:active { transform: scale(0.99); }
+        .btn-submit svg { transition: transform 0.2s; }
+        .btn-submit:hover svg { transform: translateX(4px); }
+
+        /* ── SIDEBAR CARD ── */
+        .sidebar-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 28px rgba(0,0,0,0.06);
+            animation: fadeUp 0.5s ease 0.1s both;
+        }
+
+        .sidebar-header {
+            background: var(--ink);
+            padding: 22px 26px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 100% 100%, rgba(201,168,76,0.18) 0%, transparent 60%);
+        }
+
+        .sidebar-header p {
+            font-size: 0.68rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 6px;
+            position: relative;
+        }
+
+        .sidebar-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: #fff;
+            position: relative;
+        }
+
+        .sidebar-body { padding: 26px; }
+
+        .tip-list { list-style: none; }
+
+        .tip-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.83rem;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .tip-list li:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .tip-num {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: var(--paper);
+            border: 1.5px solid var(--border);
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        .required-note {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.76rem;
+            color: var(--muted);
+        }
+
+        .required-note .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            flex-shrink: 0;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--ink);
+            color: #3a3530;
+            text-align: center;
+            font-size: 0.75rem;
+            padding: 24px;
+            letter-spacing: 0.04em;
+            margin-top: auto;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .form-layout { grid-template-columns: 1fr; }
+            .sidebar-card { order: -1; }
+        }
+
+        @media (max-width: 640px) {
+            header { padding: 0 20px; }
+            .page-hero { padding: 40px 20px 36px; }
+            main { padding: 36px 20px 60px; }
+            .card { padding: 24px; }
+            .field-row { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <a href="/" class="logo">Eventia</a>
+    <a href="{% url 'home' %}" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back to Events
+    </a>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+    <div class="page-hero-inner">
+        <div>
+            <p class="hero-eyebrow">Event Management</p>
+            <h1 class="hero-title">Create a New <em>Event</em></h1>
+        </div>
+        <p class="hero-step">Fill in the details below to publish your event</p>
+    </div>
+</div>
+
+<!-- MAIN -->
+<main>
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <div class="form-layout">
+
+            <!-- ── LEFT: MAIN FORM ── -->
+            <div>
+                <!-- Event Details Card -->
+                <div class="card">
+                    <p class="card-label">Step 1</p>
+                    <h2 class="card-title">Event Details</h2>
+
+                    <!-- Event Name -->
+                    <div class="field">
+                        <label>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                            Event Name <span class="required-dot"></span>
+                        </label>
+                        <input type="text" name="name" placeholder="e.g. Annual Tech Summit 2025" required>
+                    </div>
+
+                    <!-- Date + Location row -->
+                    <div class="field-row">
+                        <div class="field">
+                            <label>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                                </svg>
+                                Date <span class="required-dot"></span>
+                            </label>
+                            <input type="date" name="date" required>
+                        </div>
+
+                        <div class="field">
+                            <label>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                Location <span class="required-dot"></span>
+                            </label>
+                            <input type="text" name="location" placeholder="City or Venue" required>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="field">
+                        <label>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                            </svg>
+                            Description <span class="required-dot"></span>
+                        </label>
+                        <textarea name="description" placeholder="Describe your event — agenda, speakers, what attendees can expect…" required></textarea>
+                    </div>
+                </div>
+
+                <!-- Image Upload Card -->
+                <div class="card" style="margin-top: 28px;">
+                    <p class="card-label">Step 2</p>
+                    <h2 class="card-title">Event Cover Image</h2>
+
+                    <div class="file-upload-area" id="upload-zone">
+                        <input type="file" name="image" accept="image/*" required id="img-input">
+                        <div class="upload-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+                                <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+                            </svg>
+                        </div>
+                        <p class="upload-title">Drop your image here or click to browse</p>
+                        <p class="upload-hint">
+                            Supports JPG, PNG, WEBP
+                            <span>Recommended: 1280 × 720px · Max 5MB</span>
+                        </p>
+                    </div>
+
+                    <p id="file-name-display"></p>
+                    <div id="img-preview-wrap">
+                        <img id="img-preview" src="" alt="Preview">
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn-submit">
+                    Publish Event
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- ── RIGHT: SIDEBAR ── -->
+            <div class="sidebar-card">
+                <div class="sidebar-header">
+                    <p>Guidelines</p>
+                    <h3>Tips for a great event listing</h3>
+                </div>
+                <div class="sidebar-body">
+                    <ul class="tip-list">
+                        <li>
+                            <span class="tip-num">1</span>
+                            Use a clear, descriptive name so attendees know exactly what to expect.
+                        </li>
+                        <li>
+                            <span class="tip-num">2</span>
+                            Double-check the date and location — these can't be easily changed after booking.
+                        </li>
+                        <li>
+                            <span class="tip-num">3</span>
+                            Write a compelling description that covers the agenda, highlights, and audience.
+                        </li>
+                        <li>
+                            <span class="tip-num">4</span>
+                            Upload a high-quality landscape image (1280×720) to attract more attention.
+                        </li>
+                        <li>
+                            <span class="tip-num">5</span>
+                            Preview your event card on the home page after publishing.
+                        </li>
+                    </ul>
+
+                    <div class="sidebar-divider"></div>
+
+                    <p class="required-note">
+                        <span class="dot"></span>
+                        All fields marked with a gold dot are required.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</main>
+
+<!-- FOOTER -->
+<footer>&copy; 2025 Eventia · All rights reserved</footer>
+
+<script>
+    const input   = document.getElementById('img-input');
+    const display = document.getElementById('file-name-display');
+    const preview = document.getElementById('img-preview');
+    const wrap    = document.getElementById('img-preview-wrap');
+    const zone    = document.getElementById('upload-zone');
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        display.textContent = '✓ ' + file.name;
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            preview.src = e.target.result;
+            wrap.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Drag-over highlight
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', () => zone.classList.remove('drag-over'));
+</script>
+
+</body>
+</html>
